@@ -1,2 +1,2 @@
 # Build file
-echo 'Hello World'
+# Compilation needs to be written here
