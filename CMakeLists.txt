@@ -1,5 +1,5 @@
-# CMake Lists text file
-
+<<<<<<< HEAD
+>>>>>>> logan
 cmake_minimum_required(VERSION 3.12)
 project(CppProject)
 add_executable(CppProject src/main.cpp)
