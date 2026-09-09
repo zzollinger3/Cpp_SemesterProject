@@ -1,2 +1,3 @@
 # Build file
-# Compilation needs to be written here
+cmake -B build
+cmake --build build
