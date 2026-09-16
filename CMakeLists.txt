@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(package_scanner LANGUAGES CXX)
 
-find_package(pybind11 CONFIG REQUIRED)
+add_subdirectory(extern/pybind11)
 
 pybind11_add_module(package_scanner
 	src/bindings.cpp
