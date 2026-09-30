@@ -5,6 +5,7 @@ import sys
 import urllib
 import tempfile,zipfile
 import shutil
+<<<<<<< HEAD
 import package_scanner
 from batch_reporter import (
     create_category_counts,
@@ -12,6 +13,8 @@ from batch_reporter import (
     print_summary
 )
 
+=======
+>>>>>>> 3d4d408 (updated code)
 
 
 # read the project names and return the wheels 
