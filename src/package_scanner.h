@@ -1,3 +1,9 @@
+#pragma once
+
+#include <cstdint>
+#include <string>
+#include <vector>
+
 enum class FileType { Python, NativeLibrary, Metadata, DataOther };
 
 struct FileInfo {
@@ -11,3 +17,4 @@ struct ScanResult {
     std::uint64_t total_bytes{};
 };
 
+ScanResult package_scanner(const std::string& dir_path);

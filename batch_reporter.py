@@ -1,5 +1,3 @@
-import csv
-
 def create_category_counts():
     return {
         "Python": 0,
@@ -22,7 +20,7 @@ def update_category_counts(result, counts, package_scanner):
 
 
 def print_inventory_sample(project_name, result):
-    print(f"Inventory sample for {project_name}:")
+    print(f"\nInventory sample for {project_name}:")
     print("-" * 70)
     print(f"{'Path':<40} {'Category':<18} {'Size':>10}")
     print("-" * 70)
@@ -31,14 +29,11 @@ def print_inventory_sample(project_name, result):
         print(f"{file.path:<40}{file.type.name:<18}{file.size:>10}")
 
 
-def write_manifest(records, filename="manifest.csv"):
-    with open(filename, "w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(
-            file,
-            fieldnames=["project", "version", "filename"]
-        )
-        writer.writeheader()
-        writer.writerows(records)
+def process_result(project_name, result, counts, package_scanner, show_sample=False):
+    update_category_counts(result, counts, package_scanner)
+
+    if show_sample:
+        print_inventory_sample(project_name, result)
 
 
 def print_summary(counts):
@@ -47,23 +42,3 @@ def print_summary(counts):
     print(f"Native libraries:     {counts['NativeLibrary']}")
     print(f"Metadata files:       {counts['Metadata']}")
     print(f"Data/Other files:     {counts['DataOther']}")
-
-
-def process_result(
-    package,
-    result,
-    counts,
-    records,
-    package_scanner,
-    show_sample=False
-):
-    update_category_counts(result, counts, package_scanner)
-
-    if show_sample:
-        print_inventory_sample(package["project"], result)
-
-    records.append({
-        "project": package["project"],
-        "version": package["version"],
-        "filename": package["filename"]
-    })
