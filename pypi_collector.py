@@ -5,6 +5,12 @@ import sys
 import urllib
 import tempfile,zipfile
 import shutil
+import package_scanner
+from batch_reporter import (
+    create_category_counts,
+    process_result,
+    print_summary
+)
 
 
 # read the project names and return the wheels 
@@ -63,8 +69,11 @@ def main():
 	count = 0  # so it can stop at 100 good wheel files
 	manifest = [] # to hold the individual wheel data
 
+	# Part 4 reporting data
+	counts = create_category_counts()
+
 	for p in packages:
-		if count >= 10:  # changed to 10 for testing purposes
+		if count >= 100:  # changed to 10 for testing purposes
 			break
 	
 		print(f"Fetching {p}...")
@@ -81,6 +90,13 @@ def main():
 			print(f"Downloaded {wheel_path}")
 			
 			result = scan_package(wheel_path)
+			process_result(
+				p,
+				result,
+				counts,
+				package_scanner,
+				show_sample=(count == 0)
+			)
 
 			# store all the relevant data from the wheel to add to the JSON object later
 			entry = {
@@ -107,6 +123,7 @@ def main():
 		except Exception as e:
 			print(f"Error: {e}")
 			continue
+	print_summary(counts)
 
 	# write all the collected data into a JSON
 	with open("manifest.json", "w") as f:
