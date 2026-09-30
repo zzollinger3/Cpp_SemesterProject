@@ -13,6 +13,7 @@ from batch_reporter import (
 )
 
 
+
 # read the project names and return the wheels 
 def fetch_project(project):
 	url = f"https://pypi.org/pypi/{project}/json"
@@ -90,6 +91,7 @@ def main():
 			print(f"Downloaded {wheel_path}")
 			
 			result = scan_package(wheel_path)
+
 			process_result(
 				p,
 				result,
