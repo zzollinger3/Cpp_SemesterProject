@@ -5,16 +5,12 @@ import sys
 import urllib
 import tempfile,zipfile
 import shutil
-<<<<<<< HEAD
 import package_scanner
 from batch_reporter import (
     create_category_counts,
     process_result,
     print_summary
 )
-
-=======
->>>>>>> 3d4d408 (updated code)
 
 
 # read the project names and return the wheels 

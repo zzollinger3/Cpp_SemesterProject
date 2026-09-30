@@ -17,4 +17,3 @@ cp build/*/package_scanner*.pyd .
 
 # Run your Python script
 python pypi_collector.py packages.txt
-
