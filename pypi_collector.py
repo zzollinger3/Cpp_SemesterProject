@@ -7,33 +7,6 @@ import tempfile,zipfile
 import shutil
 
 
-# meant for testing purposes without the bindings.cpp file present
-
-try:
-    import package_scanner
-except ImportError:
-    class FakeFileInfo:
-        def __init__(self, path, type_name, size):
-            self.path = path
-            self.type = type("FileType", (), {"name": type_name})
-            self.size = size
-
-    class FakeScanResult:
-        def __init__(self):
-            self.total_bytes = 999
-            self.files = [
-                FakeFileInfo("stub/file.py", "Python", 50),
-                FakeFileInfo("stub/lib.so", "NativeLibrary", 150),
-            ]
-
-    def scan_directory(path):
-        print(f"[FAKE SCANNER] Scanning {path}")
-        return FakeScanResult()
-
-    package_scanner = type("FakeScannerModule", (), {"scan_directory": scan_directory})
-
-
-
 # read the project names and return the wheels 
 def fetch_project(project):
 	url = f"https://pypi.org/pypi/{project}/json"
