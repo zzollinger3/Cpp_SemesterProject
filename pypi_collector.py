@@ -90,6 +90,7 @@ def main():
 			print(f"Downloaded {wheel_path}")
 			
 			result = scan_package(wheel_path)
+
 			process_result(
 				p,
 				result,
