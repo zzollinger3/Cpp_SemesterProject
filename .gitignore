@@ -1,2 +1,5 @@
 build/
 .vs/
+__pycache__/
+manifest.json
+package_scanner.cp312-win_amd64.pyd
