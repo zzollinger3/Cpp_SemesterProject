@@ -22,11 +22,11 @@ def update_category_counts(result, counts, package_scanner):
 def print_inventory_sample(project_name, result):
     print(f"\nInventory sample for {project_name}:")
     print("-" * 70)
-    print(f"{'Path':<40} {'Category':<18} {'Size':>10} bytes")
+    print(f"{'Path':<40} {'Category':<18} {'Size':>10}")
     print("-" * 70)
 
     for file in result.files[:10]:
-        print(f"{file.path:<40}{file.type.name:<18}{file.size:>10}")
+        print(f"{file.path:<40}{file.type.name:<18}{file.size:>10} bytes")
 
 
 def process_result(project_name, result, counts, package_scanner, show_sample=False):
