@@ -6,5 +6,6 @@ add_subdirectory(extern/pybind11)
 pybind11_add_module(package_scanner
 	src/bindings.cpp
 	src/package_scanner.cpp
+	src/metadata_parser.cpp
 )
 target_compile_features(package_scanner PRIVATE cxx_std_20)
