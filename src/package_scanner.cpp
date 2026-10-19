@@ -1,4 +1,5 @@
 #include "package_scanner.h"
+#include "metadata_parser.h"
 #include <iostream>
 #include <filesystem>
 
@@ -44,5 +45,7 @@ ScanResult package_scanner(const std::string& dir_path) {
         result.files.push_back(std::move(info));
     }
 
+    result.metadata = parse_metadata(dir_path, result.files);
+    
     return result;
 }

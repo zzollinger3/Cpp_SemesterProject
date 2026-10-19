@@ -47,7 +47,7 @@ black
 isort
 flake8
 mypy
-ruff
+
 bandit
 traitlets
 nbformat
