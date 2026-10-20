@@ -32,5 +32,5 @@ PYBIND11_MODULE(package_scanner, m) {
         .def_readonly("metadata", &ScanResult::metadata)
         .def_readonly("native_count", &ScanResult::native_count)
         .def_readonly("native_bytes", &ScanResult::native_bytes);
-        m.def("scan_directory", &package_scanner);
+        m.def("scan_directory", &scan_directory);
 }
