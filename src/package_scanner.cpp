@@ -32,6 +32,8 @@ FileType classify(const fs::path& path) {
 
 ScanResult package_scanner(const std::string& dir_path) {
     ScanResult result;
+    result.native_count = 0;
+    result.native_bytes = 0;
 
     for (const auto& dir_entry : fs::recursive_directory_iterator(dir_path)) {
         if (!dir_entry.is_regular_file()) continue;
@@ -45,6 +47,13 @@ ScanResult package_scanner(const std::string& dir_path) {
         result.files.push_back(std::move(info));
     }
 
+    for (const FileInfo& file : result.files) {
+        if (file.type == FileType::NativeLibrary) {
+            ++result.native_count;
+            result.native_bytes += file.size;
+        }
+    }
+    
     result.metadata = parse_metadata(dir_path, result.files);
     
     return result;
