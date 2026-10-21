@@ -7,5 +7,6 @@ pybind11_add_module(package_scanner
 	src/bindings.cpp
 	src/package_scanner.cpp
 	src/metadata_parser.cpp
+	src/entry_points_parser.cpp
 )
 target_compile_features(package_scanner PRIVATE cxx_std_20)

@@ -2,6 +2,7 @@
 #include "metadata_parser.h"
 #include <iostream>
 #include <filesystem>
+#include "entry_points_parser.h"
 
 namespace fs = std::filesystem;
 
@@ -55,6 +56,7 @@ ScanResult package_scanner(const std::string& dir_path) {
     }
     
     result.metadata = parse_metadata(dir_path, result.files);
+    result.metadata.entry_points = parse_entry_points(dir_path, result.files);
     
     return result;
 }
