@@ -68,15 +68,11 @@ def main():
 
 	count = 0  # so it can stop at 100 good wheel files
 	manifest = [] # to hold the individual wheel data
-
-	# Part 4 reporting data
-	counts = create_category_counts()
+	results = [] # hold the info needed for final summary
 
 	for p in packages:
 		if count >= 100:  # changed to 10 for testing purposes
 			break
-	
-		print(f"Fetching {p}...")
 
 		try:
 			version, wheels = fetch_project(p)
@@ -87,16 +83,20 @@ def main():
 
 			wheel = choose_wheel(wheels)
 			wheel_path = download_wheel(wheel["url"], wheel["filename"])
-			print(f"Downloaded {wheel_path}")
 			
 			result = scan_package(wheel_path)
+			results.append(result)
 
-			process_result(
-				p,
-				result,
-				counts,
-				package_scanner,
-				show_sample=(count == 0)
+			deps = len(result.metadata.dependencies)
+			entry_pts = len(result.metadata.entry_points)
+			native = result.native_count
+			# individual package summary
+			print(
+				f"[{count + 1}/100] "
+				f"{p} {version} "
+				f"deps={deps} "
+				f"entry_points={entry_pts} "
+				f"native={native}"
 			)
 
 			# store all the relevant data from the wheel to add to the JSON object later
@@ -118,13 +118,19 @@ def main():
 
 			manifest.append(entry)
 
-			print(f"Scanned {len(result.files)} files")
 			count += 1
 	
 		except Exception as e:
 			print(f"Error: {e}")
 			continue
-	print_summary(counts)
+
+	summary = package_scanner.summarize_batch(results)
+	print(f"Packages analyzed: {summary.packages}")
+	print(f"Declared dependencies: {summary.declared_dependencies}")
+	print(f"Packages with entry points: {summary.packages_with_entry_points}")
+	print(f"Packages with native files: {summary.packages_with_native_files}")
+	print(f"Native files: {summary.native_files}")
+	print(f"Native bytes: {summary.native_bytes}")
 
 	# write all the collected data into a JSON
 	with open("manifest.json", "w") as f:
