@@ -34,8 +34,6 @@ struct ScanResult {
     std::uint64_t native_bytes{};
 };
 
-ScanResult package_scanner(const std::string& dir_path);
-
 struct BatchSummary {
     std::size_t packages{};
     std::size_t declared_dependencies{};
@@ -44,3 +42,6 @@ struct BatchSummary {
     std::uint64_t native_files{};
     std::uint64_t native_bytes{};
 };
+
+ScanResult scan_directory(const std::string& dir_path);
+BatchSummary summarize_batch(const std::vector<ScanResult>& results);

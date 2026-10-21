@@ -31,7 +31,7 @@ FileType classify(const fs::path& path) {
     return FileType::DataOther;
 }
 
-ScanResult package_scanner(const std::string& dir_path) {
+ScanResult scan_directory(const std::string& dir_path) {
     ScanResult result;
     result.native_count = 0;
     result.native_bytes = 0;
@@ -59,4 +59,19 @@ ScanResult package_scanner(const std::string& dir_path) {
     result.metadata.entry_points = parse_entry_points(dir_path, result.files);
     
     return result;
+}
+
+BatchSummary summarize_batch(const std::vector<ScanResult>& results) {
+    BatchSummary summary;
+    summary.packages = results.size();
+    for (const ScanResult& result : results) {
+        summary.declared_dependencies += result.metadata.dependencies.size();
+        if (!result.metadata.entry_points.empty())
+            ++summary.packages_with_entry_points;
+        if (result.native_count != 0)
+            ++summary.packages_with_native_files;
+        summary.native_files += result.native_count;
+        summary.native_bytes += result.native_bytes;
+    }
+    return summary;
 }
