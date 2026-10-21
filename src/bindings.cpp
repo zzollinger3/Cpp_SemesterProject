@@ -32,5 +32,13 @@ PYBIND11_MODULE(package_scanner, m) {
         .def_readonly("metadata", &ScanResult::metadata)
         .def_readonly("native_count", &ScanResult::native_count)
         .def_readonly("native_bytes", &ScanResult::native_bytes);
-        m.def("scan_directory", &scan_directory);
+    m.def("scan_directory", &scan_directory);
+    py::class_<BatchSummary>(m, "BatchSummary")
+	.def_readonly("packages", &BatchSummary::packages)
+	.def_readonly("declared_dependencies", &BatchSummary::declared_dependencies)
+	.def_readonly("packages_with_entry_points", &BatchSummary::packages_with_entry_points)
+	.def_readonly("packages_with_native_files", &BatchSummary::packages_with_native_files)
+	.def_readonly("native_files", &BatchSummary::native_files)
+	.def_readonly("native_bytes", &BatchSummary::native_bytes);
+    m.def("summarize_batch", &summarize_batch);
 }
