@@ -5,6 +5,11 @@ import sys
 import urllib
 import tempfile,zipfile
 import shutil
+from pathlib import Path
+# Add the CMake output directory to Python's module search path
+project_dir = Path(__file__).resolve().parent
+module_dir = project_dir / "build" / "python"
+sys.path.insert(0, str(module_dir))
 import package_scanner
 from batch_reporter import (
     create_category_counts,
