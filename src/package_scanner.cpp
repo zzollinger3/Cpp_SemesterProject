@@ -1,5 +1,6 @@
 #include "package_scanner.h"
 #include "metadata_parser.h"
+#include "native_analyzer.h"
 #include <iostream>
 #include <filesystem>
 #include "entry_points_parser.h"
@@ -8,6 +9,7 @@ namespace fs = std::filesystem;
 
 // Classifying Files Goes Here
 FileType classify(const fs::path& path) {
+
     // Check if the file is inside a .dist-info directory
     for (const auto& part : path) {
         if (part.extension() == ".dist-info") {
@@ -32,11 +34,13 @@ FileType classify(const fs::path& path) {
 }
 
 ScanResult scan_directory(const std::string& dir_path) {
-    ScanResult result;
-    result.native_count = 0;
-    result.native_bytes = 0;
 
-    for (const auto& dir_entry : fs::recursive_directory_iterator(dir_path)) {
+    ScanResult result;
+
+    // Collect file information
+    for (const auto& dir_entry :
+        fs::recursive_directory_iterator(dir_path)) {
+
         if (!dir_entry.is_regular_file()) continue;
 
         FileInfo info;
@@ -48,30 +52,44 @@ ScanResult scan_directory(const std::string& dir_path) {
         result.files.push_back(std::move(info));
     }
 
-    for (const FileInfo& file : result.files) {
-        if (file.type == FileType::NativeLibrary) {
-            ++result.native_count;
-            result.native_bytes += file.size;
-        }
-    }
-    
+    // Analyze native files
+    NativeAnalyzer native_analyzer;
+    native_analyzer.analyze(result.files);
+
+    result.native_count = native_analyzer.get_native_count();
+    result.native_bytes = native_analyzer.get_native_bytes();
+
+    // Parse package metadata
     result.metadata = parse_metadata(dir_path, result.files);
-    result.metadata.entry_points = parse_entry_points(dir_path, result.files);
-    
+
+    // Parse entry points
+    result.metadata.entry_points =
+        parse_entry_points(dir_path, result.files);
+
     return result;
 }
 
 BatchSummary summarize_batch(const std::vector<ScanResult>& results) {
+
     BatchSummary summary;
     summary.packages = results.size();
+
     for (const ScanResult& result : results) {
-        summary.declared_dependencies += result.metadata.dependencies.size();
-        if (!result.metadata.entry_points.empty())
+
+        summary.declared_dependencies +=
+            result.metadata.dependencies.size();
+
+        if (!result.metadata.entry_points.empty()) {
             ++summary.packages_with_entry_points;
-        if (result.native_count != 0)
+        }
+
+        if (result.native_count != 0) {
             ++summary.packages_with_native_files;
+        }
+
         summary.native_files += result.native_count;
         summary.native_bytes += result.native_bytes;
     }
+
     return summary;
 }
