@@ -41,6 +41,11 @@ struct BatchSummary {
     std::size_t packages_with_native_files{};
     std::uint64_t native_files{};
     std::uint64_t native_bytes{};
+
+    // File category counts
+    std::size_t python_files{};
+    std::size_t metadata_files{};
+    std::size_t other_files{};
 };
 
 ScanResult scan_directory(const std::string& dir_path);
