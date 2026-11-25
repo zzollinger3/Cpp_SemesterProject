@@ -1,20 +1,20 @@
 #include "package_scanner.h"
 #include "metadata_parser.h"
 #include "native_analyzer.h"
+#include "batch_analyzer.h"
 #include <iostream>
 #include <filesystem>
 #include "entry_points_parser.h"
 
 namespace fs = std::filesystem;
 
-// Classifying Files Goes Here
+// Classifies each file based on its path and extension.
 FileType classify(const fs::path& path) {
 
-    // Check if the file is inside a .dist-info directory
-    for (const auto& part : path) {
-        if (part.extension() == ".dist-info") {
-            return FileType::Metadata;
-        }
+    std::string filename = path.string();
+
+    if (filename.find(".dist-info") != std::string::npos) {
+        return FileType::Metadata;
     }
 
     std::string extension = path.extension().string();
@@ -33,63 +33,43 @@ FileType classify(const fs::path& path) {
     return FileType::DataOther;
 }
 
+
+// Scans a directory and returns information about its files.
 ScanResult scan_directory(const std::string& dir_path) {
 
     ScanResult result;
 
-    // Collect file information
-    for (const auto& dir_entry :
-        fs::recursive_directory_iterator(dir_path)) {
+    // Collect information about each file.
+    for (const auto& entry : fs::recursive_directory_iterator(dir_path)) {
 
-        if (!dir_entry.is_regular_file()) continue;
+        if (!entry.is_regular_file()) {
+            continue;
+        }
 
-        FileInfo info;
-        info.path = fs::relative(dir_entry.path(), dir_path).string();
-        info.size = fs::file_size(dir_entry.path());
-        info.type = classify(dir_entry.path());
+        FileInfo file;
 
-        result.total_bytes += info.size;
-        result.files.push_back(std::move(info));
+        file.path = entry.path().string();
+        file.type = classify(entry.path());
+        file.size = entry.file_size();
+
+        result.total_bytes += file.size;
+
+        result.files.push_back(file);
     }
 
-    // Analyze native files
+    // Analyze native libraries using NativeAnalyzer.
     NativeAnalyzer native_analyzer;
     native_analyzer.analyze(result.files);
 
     result.native_count = native_analyzer.get_native_count();
     result.native_bytes = native_analyzer.get_native_bytes();
 
-    // Parse package metadata
+    // Extract package metadata.
     result.metadata = parse_metadata(dir_path, result.files);
 
-    // Parse entry points
+    // Extract entry points.
     result.metadata.entry_points =
         parse_entry_points(dir_path, result.files);
 
     return result;
-}
-
-BatchSummary summarize_batch(const std::vector<ScanResult>& results) {
-
-    BatchSummary summary;
-    summary.packages = results.size();
-
-    for (const ScanResult& result : results) {
-
-        summary.declared_dependencies +=
-            result.metadata.dependencies.size();
-
-        if (!result.metadata.entry_points.empty()) {
-            ++summary.packages_with_entry_points;
-        }
-
-        if (result.native_count != 0) {
-            ++summary.packages_with_native_files;
-        }
-
-        summary.native_files += result.native_count;
-        summary.native_bytes += result.native_bytes;
-    }
-
-    return summary;
 }

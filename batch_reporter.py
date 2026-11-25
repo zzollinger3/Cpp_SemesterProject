@@ -36,9 +36,16 @@ def process_result(project_name, result, counts, package_scanner, show_sample=Fa
         print_inventory_sample(project_name, result)
 
 
-def print_summary(counts):
+def print_summary(summary):
     print("\n=== Batch Summary ===")
-    print(f"Python files:         {counts['Python']}")
-    print(f"Native libraries:     {counts['NativeLibrary']}")
-    print(f"Metadata files:       {counts['Metadata']}")
-    print(f"Data/Other files:     {counts['DataOther']}")
+    print(f"Packages analyzed: {summary.packages}")
+    print(f"Declared dependencies: {summary.declared_dependencies}")
+    print(f"Packages with entry points: {summary.packages_with_entry_points}")
+    print(f"Packages with native files: {summary.packages_with_native_files}")
+
+    print("\n=== File Statistics ===")
+    print(f"Python files: {summary.python_files}")
+    print(f"Native files: {summary.native_files}")
+    print(f"Metadata files: {summary.metadata_files}")
+    print(f"Data/Other files: {summary.other_files}")
+    print(f"Native bytes: {summary.native_bytes}")

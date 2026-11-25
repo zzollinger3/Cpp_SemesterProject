@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "package_scanner.h"
+#include "batch_analyzer.h"
 
 namespace py = pybind11;
 
@@ -34,11 +35,16 @@ PYBIND11_MODULE(package_scanner, m) {
         .def_readonly("native_bytes", &ScanResult::native_bytes);
     m.def("scan_directory", &scan_directory);
     py::class_<BatchSummary>(m, "BatchSummary")
-	.def_readonly("packages", &BatchSummary::packages)
-	.def_readonly("declared_dependencies", &BatchSummary::declared_dependencies)
-	.def_readonly("packages_with_entry_points", &BatchSummary::packages_with_entry_points)
-	.def_readonly("packages_with_native_files", &BatchSummary::packages_with_native_files)
-	.def_readonly("native_files", &BatchSummary::native_files)
-	.def_readonly("native_bytes", &BatchSummary::native_bytes);
-    m.def("summarize_batch", &summarize_batch);
+        .def_readonly("packages", &BatchSummary::packages)
+        .def_readonly("declared_dependencies", &BatchSummary::declared_dependencies)
+        .def_readonly("packages_with_entry_points", &BatchSummary::packages_with_entry_points)
+        .def_readonly("packages_with_native_files", &BatchSummary::packages_with_native_files)
+        .def_readonly("native_files", &BatchSummary::native_files)
+        .def_readonly("native_bytes", &BatchSummary::native_bytes)
+        .def_readonly("python_files", &BatchSummary::python_files)
+        .def_readonly("metadata_files", &BatchSummary::metadata_files)
+        .def_readonly("other_files", &BatchSummary::other_files);
+    py::class_<BatchAnalyzer>(m, "BatchAnalyzer")
+        .def(py::init<>())
+        .def("summarize_batch", &BatchAnalyzer::summarize_batch);
 }

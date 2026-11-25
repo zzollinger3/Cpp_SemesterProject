@@ -8,15 +8,10 @@ import shutil
 from pathlib import Path
 # Add the CMake output directory to Python's module search path
 project_dir = Path(__file__).resolve().parent
-module_dir = project_dir / "build" / "python"
+module_dir = project_dir / "build" / "python" / "Release"
 sys.path.insert(0, str(module_dir))
 import package_scanner
-from batch_reporter import (
-    create_category_counts,
-    process_result,
-    print_summary
-)
-
+from batch_reporter import print_summary
 
 # read the project names and return the wheels 
 def fetch_project(project):
@@ -76,7 +71,7 @@ def main():
 	results = [] # hold the info needed for final summary
 
 	for p in packages:
-		if count >= 100:  # changed to 10 for testing purposes
+		if count >= 100:
 			break
 
 		try:
@@ -129,13 +124,10 @@ def main():
 			print(f"Error: {e}")
 			continue
 
-	summary = package_scanner.summarize_batch(results)
-	print(f"Packages analyzed: {summary.packages}")
-	print(f"Declared dependencies: {summary.declared_dependencies}")
-	print(f"Packages with entry points: {summary.packages_with_entry_points}")
-	print(f"Packages with native files: {summary.packages_with_native_files}")
-	print(f"Native files: {summary.native_files}")
-	print(f"Native bytes: {summary.native_bytes}")
+	analyzer = package_scanner.BatchAnalyzer()
+	summary = analyzer.summarize_batch(results)
+	
+	print_summary(summary)
 
 	# write all the collected data into a JSON
 	with open("manifest.json", "w") as f:

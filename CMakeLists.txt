@@ -7,6 +7,7 @@ pybind11_add_module(package_scanner
 	src/bindings.cpp
 	src/package_scanner.cpp
 	src/native_analyzer.cpp
+	src/batch_analyzer.cpp
 	src/metadata_parser.cpp
 	src/entry_points_parser.cpp
 )
